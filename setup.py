@@ -18,7 +18,7 @@ def get_requirements(file_path:str)->List[str]:
 
 
 setup(
-    name = 'Diabetes Prediction',
+    name = 'Traffic Sign Detection',
     version = "0.0.1",
     author = "Asmit oli",
     author_email = "oliasmit872@gmail.com",
