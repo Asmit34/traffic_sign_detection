@@ -28,3 +28,15 @@ class DataValidationConfig:
     )
     valid_status_file_dir:str = os.path.join(data_validation_dir, training_pipeline.DATA_VALIDATION_STATUS_FILE)
     required_file_list = training_pipeline.DATA_VALIDATION_ALL_REQUIRED_FILE
+
+@dataclass
+class ModelTrainerConfig:
+    model_trainer_dir: str = os.path.join(
+        training_pipeline_config.artifacts_dir, training_pipeline.MODEL_TRIANER_DIR_NAME
+    )
+
+    weight_name = training_pipeline.MODEL_TRAINER_PRETRAINED_WEIGHT_NAME
+
+    no_epochs = training_pipeline.MODEL_TRIANER_NO_EPOCHS
+
+    batch_size = training_pipeline.MODEL_TRAINER_BATCH_SIZE

@@ -1,0 +1,9 @@
+# train and val data
+train: C:/Users/asmit/OneDrive/Desktop/traffic_sign_detection/artifacts/data_ingestion/feature_store/train/images
+val: C:/Users/asmit/OneDrive/Desktop/traffic_sign_detection/artifacts/data_ingestion/feature_store/val/images
+
+# number of classes
+nc: 4
+
+# class names
+names: ['speed limit', 'yield', 'mandatory', 'other']
