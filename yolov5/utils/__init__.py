@@ -1,4 +1,4 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 """utils/initialization."""
 
 import contextlib
@@ -12,7 +12,8 @@ def emojis(str=""):
 
 
 class TryExcept(contextlib.ContextDecorator):
-    # YOLOv5 TryExcept class. Usage: @TryExcept() decorator or 'with TryExcept():' context manager
+    """A context manager and decorator for error handling that prints an optional message with emojis on exception."""
+
     def __init__(self, msg=""):
         """Initializes TryExcept with an optional message, used as a decorator or context manager for error handling."""
         self.msg = msg
@@ -43,8 +44,7 @@ def threaded(func):
 
 
 def join_threads(verbose=False):
-    """
-    Joins all daemon threads, optionally printing their names if verbose is True.
+    """Joins all daemon threads, optionally printing their names if verbose is True.
 
     Example: atexit.register(lambda: join_threads())
     """
@@ -82,7 +82,7 @@ def notebook_init(verbose=True):
     if verbose:
         gb = 1 << 30  # bytes to GiB (1024 ** 3)
         ram = psutil.virtual_memory().total
-        total, used, free = shutil.disk_usage("/")
+        total, _used, free = shutil.disk_usage("/")
         with contextlib.suppress(Exception):  # clear display if ipython is installed
             from IPython import display
 

@@ -26,3 +26,10 @@ MODEL_TRIANER_DIR_NAME :str = "model_trainer"
 MODEL_TRAINER_PRETRAINED_WEIGHT_NAME: str = "yolov5s.pt"
 MODEL_TRIANER_NO_EPOCHS:int = 50
 MODEL_TRAINER_BATCH_SIZE: int  = 16
+
+"""
+Model evaluation constants
+"""
+MODEL_EVALUATION_DIR_NAME: str = "model_evaluation"
+MODEL_EVALUATION_FILE_NAME: str = "evaluation.yaml"
+MODEL_EVALUATION_THRESHOLD: float = 0.5

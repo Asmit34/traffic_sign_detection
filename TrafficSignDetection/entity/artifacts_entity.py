@@ -12,3 +12,9 @@ class DataValidationArtifact:
 @dataclass
 class ModelTrainerArtifact:
     trained_model_file_path: str
+
+@dataclass
+class ModelEvaluationArtifact:
+    is_model_accepted: bool
+    improved_accuracy: float
+    best_model_path: str

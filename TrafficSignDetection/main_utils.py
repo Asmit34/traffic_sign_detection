@@ -24,3 +24,10 @@ def encodeImageIntoBase64(croppedImagePath):
     with open(croppedImagePath, "rb") as f:
 
       return base64.b64encode(f.read())
+    
+def write_yaml_file(file_path: str, content: dict) -> None:
+    try:
+        with open(file_path, "w") as yaml_file:
+            yaml.dump(content, yaml_file)
+    except Exception as e:
+        raise CustomException(e, sys)

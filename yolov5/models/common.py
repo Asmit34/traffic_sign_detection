@@ -1,4 +1,4 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 """Common modules."""
 
 import ast
@@ -58,8 +58,7 @@ from utils.torch_utils import copy_attr, smart_inference_mode
 
 
 def autopad(k, p=None, d=1):
-    """
-    Pads kernel to 'same' output shape, adjusting for optional dilation; returns padding size.
+    """Pads kernel to 'same' output shape, adjusting for optional dilation; returns padding size.
 
     `k`: kernel, `p`: padding, `d`: dilation.
     """
@@ -71,7 +70,8 @@ def autopad(k, p=None, d=1):
 
 
 class Conv(nn.Module):
-    # Standard convolution with args(ch_in, ch_out, kernel, stride, padding, groups, dilation, activation)
+    """Applies a convolution, batch normalization, and activation function to an input tensor in a neural network."""
+
     default_act = nn.SiLU()  # default activation
 
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
@@ -91,7 +91,8 @@ class Conv(nn.Module):
 
 
 class DWConv(Conv):
-    # Depth-wise convolution
+    """Implements a depth-wise convolution layer with optional activation for efficient spatial filtering."""
+
     def __init__(self, c1, c2, k=1, s=1, d=1, act=True):
         """Initializes a depth-wise convolution layer with optional activation; args: input channels (c1), output
         channels (c2), kernel size (k), stride (s), dilation (d), and activation flag (act).
@@ -100,7 +101,8 @@ class DWConv(Conv):
 
 
 class DWConvTranspose2d(nn.ConvTranspose2d):
-    # Depth-wise transpose convolution
+    """A depth-wise transpose convolutional layer for upsampling in neural networks, particularly in YOLOv5 models."""
+
     def __init__(self, c1, c2, k=1, s=1, p1=0, p2=0):
         """Initializes a depth-wise transpose convolutional layer for YOLOv5; args: input channels (c1), output channels
         (c2), kernel size (k), stride (s), input padding (p1), output padding (p2).
@@ -109,10 +111,10 @@ class DWConvTranspose2d(nn.ConvTranspose2d):
 
 
 class TransformerLayer(nn.Module):
-    # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
+    """Transformer layer with multihead attention and linear layers, optimized by removing LayerNorm."""
+
     def __init__(self, c, num_heads):
-        """
-        Initializes a transformer layer, sans LayerNorm for performance, with multihead attention and linear layers.
+        """Initializes a transformer layer, sans LayerNorm for performance, with multihead attention and linear layers.
 
         See  as described in https://arxiv.org/abs/2010.11929.
         """
@@ -132,7 +134,8 @@ class TransformerLayer(nn.Module):
 
 
 class TransformerBlock(nn.Module):
-    # Vision Transformer https://arxiv.org/abs/2010.11929
+    """A Transformer block for vision tasks with convolution, position embeddings, and Transformer layers."""
+
     def __init__(self, c1, c2, num_heads, num_layers):
         """Initializes a Transformer block for vision tasks, adapting dimensions if necessary and stacking specified
         layers.
@@ -157,7 +160,8 @@ class TransformerBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
-    # Standard bottleneck
+    """A bottleneck layer with optional shortcut and group convolution for efficient feature extraction."""
+
     def __init__(self, c1, c2, shortcut=True, g=1, e=0.5):
         """Initializes a standard bottleneck layer with optional shortcut and group convolution, supporting channel
         expansion.
@@ -176,7 +180,8 @@ class Bottleneck(nn.Module):
 
 
 class BottleneckCSP(nn.Module):
-    # CSP Bottleneck https://github.com/WongKinYiu/CrossStagePartialNetworks
+    """CSP bottleneck layer for feature extraction with cross-stage partial connections and optional shortcuts."""
+
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         """Initializes CSP bottleneck with optional shortcuts; args: ch_in, ch_out, number of repeats, shortcut bool,
         groups, expansion.
@@ -201,10 +206,10 @@ class BottleneckCSP(nn.Module):
 
 
 class CrossConv(nn.Module):
-    # Cross Convolution Downsample
+    """Implements a cross convolution layer with downsampling, expansion, and optional shortcut."""
+
     def __init__(self, c1, c2, k=3, s=1, g=1, e=1.0, shortcut=False):
-        """
-        Initializes CrossConv with downsampling, expanding, and optionally shortcutting; `c1` input, `c2` output
+        """Initializes CrossConv with downsampling, expanding, and optionally shortcutting; `c1` input, `c2` output
         channels.
 
         Inputs are ch_in, ch_out, kernel, stride, groups, expansion, shortcut.
@@ -221,7 +226,8 @@ class CrossConv(nn.Module):
 
 
 class C3(nn.Module):
-    # CSP Bottleneck with 3 convolutions
+    """Implements a CSP Bottleneck module with three convolutions for enhanced feature extraction in neural networks."""
+
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         """Initializes C3 module with options for channel count, bottleneck repetition, shortcut usage, group
         convolutions, and expansion.
@@ -239,7 +245,8 @@ class C3(nn.Module):
 
 
 class C3x(C3):
-    # C3 module with cross-convolutions
+    """Extends the C3 module with cross-convolutions for enhanced feature extraction in neural networks."""
+
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         """Initializes C3x module with cross-convolutions, extending C3 with customizable channel dimensions, groups,
         and expansion.
@@ -250,7 +257,8 @@ class C3x(C3):
 
 
 class C3TR(C3):
-    # C3 module with TransformerBlock()
+    """C3 module with TransformerBlock for enhanced feature extraction in object detection models."""
+
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         """Initializes C3 module with TransformerBlock for enhanced feature extraction, accepts channel sizes, shortcut
         config, group, and expansion.
@@ -261,7 +269,8 @@ class C3TR(C3):
 
 
 class C3SPP(C3):
-    # C3 module with SPP()
+    """Extends the C3 module with an SPP layer for enhanced spatial feature extraction and customizable channels."""
+
     def __init__(self, c1, c2, k=(5, 9, 13), n=1, shortcut=True, g=1, e=0.5):
         """Initializes a C3 module with SPP layer for advanced spatial feature extraction, given channel sizes, kernel
         sizes, shortcut, group, and expansion ratio.
@@ -272,7 +281,8 @@ class C3SPP(C3):
 
 
 class C3Ghost(C3):
-    # C3 module with GhostBottleneck()
+    """Implements a C3 module with Ghost Bottlenecks for efficient feature extraction in YOLOv5."""
+
     def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
         """Initializes YOLOv5's C3 module with Ghost Bottlenecks for efficient feature extraction."""
         super().__init__(c1, c2, n, shortcut, g, e)
@@ -281,9 +291,12 @@ class C3Ghost(C3):
 
 
 class SPP(nn.Module):
-    # Spatial Pyramid Pooling (SPP) layer https://arxiv.org/abs/1406.4729
+    """Implements Spatial Pyramid Pooling (SPP) for feature extraction, ref: https://arxiv.org/abs/1406.4729."""
+
     def __init__(self, c1, c2, k=(5, 9, 13)):
-        """Initializes SPP layer with Spatial Pyramid Pooling, ref: https://arxiv.org/abs/1406.4729, args: c1 (input channels), c2 (output channels), k (kernel sizes)."""
+        """Initializes SPP layer with Spatial Pyramid Pooling, ref: https://arxiv.org/abs/1406.4729, args: c1 (input
+        channels), c2 (output channels), k (kernel sizes).
+        """
         super().__init__()
         c_ = c1 // 2  # hidden channels
         self.cv1 = Conv(c1, c_, 1, 1)
@@ -301,10 +314,10 @@ class SPP(nn.Module):
 
 
 class SPPF(nn.Module):
-    # Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher
+    """Implements a fast Spatial Pyramid Pooling (SPPF) layer for efficient feature extraction in YOLOv5 models."""
+
     def __init__(self, c1, c2, k=5):
-        """
-        Initializes YOLOv5 SPPF layer with given channels and kernel size for YOLOv5 model, combining convolution and
+        """Initializes YOLOv5 SPPF layer with given channels and kernel size for YOLOv5 model, combining convolution and
         max pooling.
 
         Equivalent to SPP(k=(5, 9, 13)).
@@ -326,7 +339,8 @@ class SPPF(nn.Module):
 
 
 class Focus(nn.Module):
-    # Focus wh information into c-space
+    """Focuses spatial information into channel space using slicing and convolution for efficient feature extraction."""
+
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1, act=True):
         """Initializes Focus module to concentrate width-height info into channel space with configurable convolution
         parameters.
@@ -342,7 +356,8 @@ class Focus(nn.Module):
 
 
 class GhostConv(nn.Module):
-    # Ghost Convolution https://github.com/huawei-noah/ghostnet
+    """Implements Ghost Convolution for efficient feature extraction, see https://github.com/huawei-noah/ghostnet."""
+
     def __init__(self, c1, c2, k=1, s=1, g=1, act=True):
         """Initializes GhostConv with in/out channels, kernel size, stride, groups, and activation; halves out channels
         for efficiency.
@@ -359,9 +374,12 @@ class GhostConv(nn.Module):
 
 
 class GhostBottleneck(nn.Module):
-    # Ghost Bottleneck https://github.com/huawei-noah/ghostnet
+    """Efficient bottleneck layer using Ghost Convolutions, see https://github.com/huawei-noah/ghostnet."""
+
     def __init__(self, c1, c2, k=3, s=1):
-        """Initializes GhostBottleneck with ch_in `c1`, ch_out `c2`, kernel size `k`, stride `s`; see https://github.com/huawei-noah/ghostnet."""
+        """Initializes GhostBottleneck with ch_in `c1`, ch_out `c2`, kernel size `k`, stride `s`; see
+        https://github.com/huawei-noah/ghostnet.
+        """
         super().__init__()
         c_ = c2 // 2
         self.conv = nn.Sequential(
@@ -379,7 +397,8 @@ class GhostBottleneck(nn.Module):
 
 
 class Contract(nn.Module):
-    # Contract width-height into channels, i.e. x(1,64,80,80) to x(1,256,40,40)
+    """Contracts spatial dimensions into channel dimensions for efficient processing in neural networks."""
+
     def __init__(self, gain=2):
         """Initializes a layer to contract spatial dimensions (width-height) into channels, e.g., input shape
         (1,64,80,80) to (1,256,40,40).
@@ -399,11 +418,11 @@ class Contract(nn.Module):
 
 
 class Expand(nn.Module):
-    # Expand channels into width-height, i.e. x(1,64,80,80) to x(1,16,160,160)
+    """Expands spatial dimensions by redistributing channels, e.g., from (1,64,80,80) to (1,16,160,160)."""
+
     def __init__(self, gain=2):
-        """
-        Initializes the Expand module to increase spatial dimensions by redistributing channels, with an optional gain
-        factor.
+        """Initializes the Expand module to increase spatial dimensions by redistributing channels, with an optional
+        gain factor.
 
         Example: x(1,64,80,80) to x(1,16,160,160).
         """
@@ -411,9 +430,7 @@ class Expand(nn.Module):
         self.gain = gain
 
     def forward(self, x):
-        """Processes input tensor x to expand spatial dimensions by redistributing channels, requiring C / gain^2 ==
-        0.
-        """
+        """Processes input tensor x to expand spatial dims by redistributing channels, requiring C / gain^2 == 0."""
         b, c, h, w = x.size()  # assert C / s ** 2 == 0, 'Indivisible gain'
         s = self.gain
         x = x.view(b, s, s, c // s**2, h, w)  # x(1,2,2,16,80,80)
@@ -422,21 +439,21 @@ class Expand(nn.Module):
 
 
 class Concat(nn.Module):
-    # Concatenate a list of tensors along dimension
+    """Concatenates tensors along a specified dimension for efficient tensor manipulation in neural networks."""
+
     def __init__(self, dimension=1):
         """Initializes a Concat module to concatenate tensors along a specified dimension."""
         super().__init__()
         self.d = dimension
 
     def forward(self, x):
-        """Concatenates a list of tensors along a specified dimension; `x` is a list of tensors, `dimension` is an
-        int.
-        """
+        """Concatenates a list of tensors along a specified dims; `x` is a list of tensors, `dimension` is an int."""
         return torch.cat(x, self.d)
 
 
 class DetectMultiBackend(nn.Module):
-    # YOLOv5 MultiBackend class for python inference on various backends
+    """YOLOv5 MultiBackend class for inference on various backends including PyTorch, ONNX, TensorRT, and more."""
+
     def __init__(self, weights="yolov5s.pt", device=torch.device("cpu"), dnn=False, data=None, fp16=False, fuse=True):
         """Initializes DetectMultiBackend with support for various inference backends, including PyTorch and ONNX."""
         #   PyTorch:              weights = *.pt
@@ -622,20 +639,33 @@ class DetectMultiBackend(nn.Module):
                     stride, names = int(meta["stride"]), meta["names"]
         elif tfjs:  # TF.js
             raise NotImplementedError("ERROR: YOLOv5 TF.js inference is not supported")
-        elif paddle:  # PaddlePaddle
+        # PaddlePaddle
+        elif paddle:
             LOGGER.info(f"Loading {w} for PaddlePaddle inference...")
-            check_requirements("paddlepaddle-gpu" if cuda else "paddlepaddle")
+            check_requirements("paddlepaddle-gpu" if cuda else "paddlepaddle>=3.0.0")
             import paddle.inference as pdi
 
-            if not Path(w).is_file():  # if not *.pdmodel
-                w = next(Path(w).rglob("*.pdmodel"))  # get *.pdmodel file from *_paddle_model dir
-            weights = Path(w).with_suffix(".pdiparams")
-            config = pdi.Config(str(w), str(weights))
+            w = Path(w)
+            if w.is_dir():
+                model_file = next(w.rglob("*.json"), None)
+                params_file = next(w.rglob("*.pdiparams"), None)
+            elif w.suffix == ".pdiparams":
+                model_file = w.with_name("model.json")
+                params_file = w
+            else:
+                raise ValueError(f"Invalid model path {w}. Provide model directory or a .pdiparams file.")
+
+            if not (model_file and params_file and model_file.is_file() and params_file.is_file()):
+                raise FileNotFoundError(f"Model files not found in {w}. Both .json and .pdiparams files are required.")
+
+            config = pdi.Config(str(model_file), str(params_file))
             if cuda:
                 config.enable_use_gpu(memory_pool_init_size_mb=2048, device_id=0)
+            config.disable_mkldnn()  # disable MKL-DNN for PIR compatibility
             predictor = pdi.create_predictor(config)
             input_handle = predictor.get_input_handle(predictor.get_input_names()[0])
             output_names = predictor.get_output_names()
+
         elif triton:  # NVIDIA Triton Inference Server
             LOGGER.info(f"Using {w} as Triton Inference Server...")
             check_requirements("tritonclient[all]")
@@ -656,7 +686,7 @@ class DetectMultiBackend(nn.Module):
 
     def forward(self, im, augment=False, visualize=False):
         """Performs YOLOv5 inference on input images with options for augmentation and visualization."""
-        b, ch, h, w = im.shape  # batch, channel, height, width
+        _b, _ch, h, w = im.shape  # batch, channel, height, width
         if self.fp16 and im.dtype != torch.float16:
             im = im.half()  # to FP16
         if self.nhwc:
@@ -696,7 +726,7 @@ class DetectMultiBackend(nn.Module):
             y = self.model.predict({"image": im})  # coordinates are xywh normalized
             if "confidence" in y:
                 box = xywh2xyxy(y["coordinates"] * [[w, h, w, h]])  # xyxy pixels
-                conf, cls = y["confidence"].max(1), y["confidence"].argmax(1).astype(np.float)
+                conf, cls = y["confidence"].max(1), y["confidence"].argmax(1).astype(float)
                 y = np.concatenate((box, conf.reshape(-1, 1), cls.reshape(-1, 1)), 1)
             else:
                 y = list(reversed(y.values()))  # reversed for segmentation models (pred, proto)
@@ -728,6 +758,8 @@ class DetectMultiBackend(nn.Module):
                         scale, zero_point = output["quantization"]
                         x = (x.astype(np.float32) - zero_point) * scale  # re-scale
                     y.append(x)
+            if len(y) == 2 and len(y[1].shape) != 4:
+                y = list(reversed(y))
             y = [x if isinstance(x, np.ndarray) else x.numpy() for x in y]
             y[0][..., :4] *= [w, h, w, h]  # xywh normalized to pixels
 
@@ -750,8 +782,7 @@ class DetectMultiBackend(nn.Module):
 
     @staticmethod
     def _model_type(p="path/to/model.pt"):
-        """
-        Determines model type from file path or URL, supporting various export formats.
+        """Determines model type from file path or URL, supporting various export formats.
 
         Example: path='path/to/model.onnx' -> type=onnx
         """
@@ -766,7 +797,7 @@ class DetectMultiBackend(nn.Module):
         types = [s in Path(p).name for s in sf]
         types[8] &= not types[9]  # tflite &= not edgetpu
         triton = not any(types) and all([any(s in url.scheme for s in ["http", "grpc"]), url.netloc])
-        return types + [triton]
+        return [*types, triton]
 
     @staticmethod
     def _load_metadata(f=Path("path/to/meta.yaml")):
@@ -778,7 +809,8 @@ class DetectMultiBackend(nn.Module):
 
 
 class AutoShape(nn.Module):
-    # YOLOv5 input-robust model wrapper for passing cv2/np/PIL/torch inputs. Includes preprocessing, inference and NMS
+    """AutoShape class for robust YOLOv5 inference with preprocessing, NMS, and support for various input formats."""
+
     conf = 0.25  # NMS confidence threshold
     iou = 0.45  # NMS IoU threshold
     agnostic = False  # NMS class-agnostic
@@ -802,8 +834,7 @@ class AutoShape(nn.Module):
             m.export = True  # do not output loss values
 
     def _apply(self, fn):
-        """
-        Applies to(), cpu(), cuda(), half() etc.
+        """Applies to(), cpu(), cuda(), half() etc.
 
         to model tensors excluding parameters or registered buffers.
         """
@@ -818,8 +849,7 @@ class AutoShape(nn.Module):
 
     @smart_inference_mode()
     def forward(self, ims, size=640, augment=False, profile=False):
-        """
-        Performs inference on inputs with optional augment & profiling.
+        """Performs inference on inputs with optional augment & profiling.
 
         Supports various formats including file, URI, OpenCV, PIL, numpy, torch.
         """
@@ -889,7 +919,8 @@ class AutoShape(nn.Module):
 
 
 class Detections:
-    # YOLOv5 detections class for inference results
+    """Manages YOLOv5 detection results with methods for visualization, saving, cropping, and exporting detections."""
+
     def __init__(self, ims, pred, files, times=(0, 0, 0), names=None, shape=None):
         """Initializes the YOLOv5 Detections class with image info, predictions, filenames, timing and normalization."""
         super().__init__()
@@ -964,16 +995,14 @@ class Detections:
 
     @TryExcept("Showing images is not supported in this environment")
     def show(self, labels=True):
-        """
-        Displays detection results with optional labels.
+        """Displays detection results with optional labels.
 
         Usage: show(labels=True)
         """
         self._run(show=True, labels=labels)  # show results
 
     def save(self, labels=True, save_dir="runs/detect/exp", exist_ok=False):
-        """
-        Saves detection results with optional labels to a specified directory.
+        """Saves detection results with optional labels to a specified directory.
 
         Usage: save(labels=True, save_dir='runs/detect/exp', exist_ok=False)
         """
@@ -981,8 +1010,7 @@ class Detections:
         self._run(save=True, labels=labels, save_dir=save_dir)  # save results
 
     def crop(self, save=True, save_dir="runs/detect/exp", exist_ok=False):
-        """
-        Crops detection results, optionally saves them to a directory.
+        """Crops detection results, optionally saves them to a directory.
 
         Args: save (bool), save_dir (str), exist_ok (bool).
         """
@@ -995,8 +1023,7 @@ class Detections:
         return self.ims
 
     def pandas(self):
-        """
-        Returns detections as pandas DataFrames for various box formats (xyxy, xyxyn, xywh, xywhn).
+        """Returns detections as pandas DataFrames for various box formats (xyxy, xyxyn, xywh, xywhn).
 
         Example: print(results.pandas().xyxy[0]).
         """
@@ -1004,13 +1031,12 @@ class Detections:
         ca = "xmin", "ymin", "xmax", "ymax", "confidence", "class", "name"  # xyxy columns
         cb = "xcenter", "ycenter", "width", "height", "confidence", "class", "name"  # xywh columns
         for k, c in zip(["xyxy", "xyxyn", "xywh", "xywhn"], [ca, ca, cb, cb]):
-            a = [[x[:5] + [int(x[5]), self.names[int(x[5])]] for x in x.tolist()] for x in getattr(self, k)]  # update
+            a = [[[*x[:5], int(x[5]), self.names[int(x[5])]] for x in x.tolist()] for x in getattr(self, k)]  # update
             setattr(new, k, [pd.DataFrame(x, columns=c) for x in a])
         return new
 
     def tolist(self):
-        """
-        Converts a Detections object into a list of individual detection results for iteration.
+        """Converts a Detections object into a list of individual detection results for iteration.
 
         Example: for result in results.tolist():
         """
@@ -1047,7 +1073,8 @@ class Detections:
 
 
 class Proto(nn.Module):
-    # YOLOv5 mask Proto module for segmentation models
+    """YOLOv5 mask Proto module for segmentation models, performing convolutions and upsampling on input tensors."""
+
     def __init__(self, c1, c_=256, c2=32):
         """Initializes YOLOv5 Proto module for segmentation with input, proto, and mask channels configuration."""
         super().__init__()
@@ -1062,7 +1089,8 @@ class Proto(nn.Module):
 
 
 class Classify(nn.Module):
-    # YOLOv5 classification head, i.e. x(b,c1,20,20) to x(b,c2)
+    """YOLOv5 classification head with convolution, pooling, and dropout layers for channel transformation."""
+
     def __init__(
         self, c1, c2, k=1, s=1, p=None, g=1, dropout_p=0.0
     ):  # ch_in, ch_out, kernel, stride, padding, groups, dropout probability

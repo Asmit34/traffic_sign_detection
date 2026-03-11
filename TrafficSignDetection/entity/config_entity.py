@@ -40,3 +40,18 @@ class ModelTrainerConfig:
     no_epochs = training_pipeline.MODEL_TRIANER_NO_EPOCHS
 
     batch_size = training_pipeline.MODEL_TRAINER_BATCH_SIZE
+
+@dataclass
+class ModelEvaluationConfig:
+
+    model_evaluation_dir: str = os.path.join(
+        training_pipeline_config.artifacts_dir,
+        training_pipeline.MODEL_EVALUATION_DIR_NAME
+    )
+
+    evaluation_file_path: str = os.path.join(
+        model_evaluation_dir,
+        training_pipeline.MODEL_EVALUATION_FILE_NAME
+    )
+
+    threshold: float = training_pipeline.MODEL_EVALUATION_THRESHOLD

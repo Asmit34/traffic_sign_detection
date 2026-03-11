@@ -1,4 +1,4 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 """Image augmentation functions."""
 
 import math
@@ -18,7 +18,8 @@ IMAGENET_STD = 0.229, 0.224, 0.225  # RGB standard deviation
 
 
 class Albumentations:
-    # YOLOv5 Albumentations class (optional, only used if package is installed)
+    """Provides optional data augmentation for YOLOv5 using Albumentations library if installed."""
+
     def __init__(self, size=640):
         """Initializes Albumentations class for optional data augmentation in YOLOv5 with specified input size."""
         self.transform = None
@@ -55,8 +56,7 @@ class Albumentations:
 
 
 def normalize(x, mean=IMAGENET_MEAN, std=IMAGENET_STD, inplace=False):
-    """
-    Applies ImageNet normalization to RGB images in BCHW format, modifying them in-place if specified.
+    """Applies ImageNet normalization to RGB images in BCHW format, modifying them in-place if specified.
 
     Example: y = (x - mean) / std
     """
@@ -98,8 +98,7 @@ def hist_equalize(im, clahe=True, bgr=False):
 
 
 def replicate(im, labels):
-    """
-    Replicates half of the smallest object labels in an image for data augmentation.
+    """Replicates half of the smallest object labels in an image for data augmentation.
 
     Returns augmented image and labels.
     """
@@ -131,7 +130,7 @@ def letterbox(im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleF
 
     # Compute padding
     ratio = r, r  # width, height ratios
-    new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+    new_unpad = round(shape[1] * r), round(shape[0] * r)
     dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]  # wh padding
     if auto:  # minimum rectangle
         dw, dh = np.mod(dw, stride), np.mod(dh, stride)  # wh padding
@@ -145,8 +144,8 @@ def letterbox(im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleF
 
     if shape[::-1] != new_unpad:  # resize
         im = cv2.resize(im, new_unpad, interpolation=cv2.INTER_LINEAR)
-    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
-    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
+    top, bottom = round(dh - 0.1), round(dh + 0.1)
+    left, right = round(dw - 0.1), round(dw + 0.1)
     im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)  # add border
     return im, ratio, (dw, dh)
 
@@ -156,7 +155,6 @@ def random_perspective(
 ):
     # torchvision.transforms.RandomAffine(degrees=(-10, 10), translate=(0.1, 0.1), scale=(0.9, 1.1), shear=(-10, 10))
     # targets = [cls, xyxy]
-
     """Applies random perspective transformation to an image, modifying the image and corresponding labels."""
     height = im.shape[0] + border[0] * 2  # shape(h,w,c)
     width = im.shape[1] + border[1] * 2
@@ -197,15 +195,7 @@ def random_perspective(
         else:  # affine
             im = cv2.warpAffine(im, M[:2], dsize=(width, height), borderValue=(114, 114, 114))
 
-    # Visualize
-    # import matplotlib.pyplot as plt
-    # ax = plt.subplots(1, 2, figsize=(12, 6))[1].ravel()
-    # ax[0].imshow(im[:, :, ::-1])  # base
-    # ax[1].imshow(im2[:, :, ::-1])  # warped
-
-    # Transform label coordinates
-    n = len(targets)
-    if n:
+    if n := len(targets):
         use_segments = any(x.any() for x in segments) and len(segments) == n
         new = np.zeros((n, 4))
         if use_segments:  # warp segments
@@ -243,14 +233,13 @@ def random_perspective(
 
 
 def copy_paste(im, labels, segments, p=0.5):
-    """
-    Applies Copy-Paste augmentation by flipping and merging segments and labels on an image.
+    """Applies Copy-Paste augmentation by flipping and merging segments and labels on an image.
 
     Details at https://arxiv.org/abs/2012.07177.
     """
     n = len(segments)
     if p and n:
-        h, w, c = im.shape  # height, width, channels
+        _h, w, _c = im.shape  # height, width, channels
         im_new = np.zeros(im.shape, np.uint8)
         for j in random.sample(range(n), k=round(p * n)):
             l, s = labels[j], segments[j]
@@ -269,8 +258,7 @@ def copy_paste(im, labels, segments, p=0.5):
 
 
 def cutout(im, labels, p=0.5):
-    """
-    Applies cutout augmentation to an image with optional label adjustment, using random masks of varying sizes.
+    """Applies cutout augmentation to an image with optional label adjustment, using random masks of varying sizes.
 
     Details at https://arxiv.org/abs/1708.04552.
     """
@@ -300,8 +288,7 @@ def cutout(im, labels, p=0.5):
 
 
 def mixup(im, labels, im2, labels2):
-    """
-    Applies MixUp augmentation by blending images and labels.
+    """Applies MixUp augmentation by blending images and labels.
 
     See https://arxiv.org/pdf/1710.09412.pdf for details.
     """
@@ -312,8 +299,7 @@ def mixup(im, labels, im2, labels2):
 
 
 def box_candidates(box1, box2, wh_thr=2, ar_thr=100, area_thr=0.1, eps=1e-16):
-    """
-    Filters bounding box candidates by minimum width-height threshold `wh_thr` (pixels), aspect ratio threshold
+    """Filters bounding box candidates by minimum width-height threshold `wh_thr` (pixels), aspect ratio threshold
     `ar_thr`, and area ratio threshold `area_thr`.
 
     box1(4,n) is before augmentation, box2(4,n) is after augmentation.
@@ -337,9 +323,7 @@ def classify_albumentations(
     auto_aug=False,
 ):
     # YOLOv5 classification Albumentations (optional, only used if package is installed)
-    """Sets up and returns Albumentations transforms for YOLOv5 classification tasks depending on augmentation
-    settings.
-    """
+    """Sets up Albumentations transforms for YOLOv5 classification tasks depending on augmentation settings."""
     prefix = colorstr("albumentations: ")
     try:
         import albumentations as A
@@ -379,7 +363,8 @@ def classify_transforms(size=224):
 
 
 class LetterBox:
-    # YOLOv5 LetterBox class for image preprocessing, i.e. T.Compose([LetterBox(size), ToTensor()])
+    """Resizes and pads images to specified dimensions while maintaining aspect ratio for YOLOv5 preprocessing."""
+
     def __init__(self, size=(640, 640), auto=False, stride=32):
         """Initializes a LetterBox object for YOLOv5 image preprocessing with optional auto sizing and stride
         adjustment.
@@ -390,8 +375,7 @@ class LetterBox:
         self.stride = stride  # used with auto
 
     def __call__(self, im):
-        """
-        Resizes and pads input image `im` (HWC format) to specified dimensions, maintaining aspect ratio.
+        """Resizes and pads input image `im` (HWC format) to specified dimensions, maintaining aspect ratio.
 
         im = np.array HWC
         """
@@ -406,15 +390,15 @@ class LetterBox:
 
 
 class CenterCrop:
-    # YOLOv5 CenterCrop class for image preprocessing, i.e. T.Compose([CenterCrop(size), ToTensor()])
+    """Applies center crop to an image, resizing it to the specified size while maintaining aspect ratio."""
+
     def __init__(self, size=640):
         """Initializes CenterCrop for image preprocessing, accepting single int or tuple for size, defaults to 640."""
         super().__init__()
         self.h, self.w = (size, size) if isinstance(size, int) else size
 
     def __call__(self, im):
-        """
-        Applies center crop to the input image and resizes it to a specified size, maintaining aspect ratio.
+        """Applies center crop to the input image and resizes it to a specified size, maintaining aspect ratio.
 
         im = np.array HWC
         """
@@ -425,15 +409,15 @@ class CenterCrop:
 
 
 class ToTensor:
-    # YOLOv5 ToTensor class for image preprocessing, i.e. T.Compose([LetterBox(size), ToTensor()])
+    """Converts BGR np.array image from HWC to RGB CHW format, normalizes to [0, 1], and supports FP16 if half=True."""
+
     def __init__(self, half=False):
         """Initializes ToTensor for YOLOv5 image preprocessing, with optional half precision (half=True for FP16)."""
         super().__init__()
         self.half = half
 
     def __call__(self, im):
-        """
-        Converts BGR np.array image from HWC to RGB CHW format, and normalizes to [0, 1], with support for FP16 if
+        """Converts BGR np.array image from HWC to RGB CHW format, and normalizes to [0, 1], with support for FP16 if
         `half=True`.
 
         im = np.array HWC in BGR order
