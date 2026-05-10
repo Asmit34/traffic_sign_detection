@@ -5,7 +5,9 @@ from TrafficSignDetection.components.data_ingestion import DataIngestion
 from TrafficSignDetection.components.data_validation import DataValidation
 from TrafficSignDetection.components.model_trainer import ModelTrainer
 from TrafficSignDetection.components.model_evaluation import ModelEvaluation
-
+from TrafficSignDetection.components.model_pusher import ModelPusher
+from TrafficSignDetection.entity.config_entity import ModelPusherConfig
+from TrafficSignDetection.entity.artifacts_entity import ModelPusherArtifact
 from TrafficSignDetection.entity.config_entity import (DataIngestionConfig,
                                                  DataValidationConfig,
                                                  ModelTrainerConfig,
@@ -25,6 +27,7 @@ class TrainPipeline:
         self.data_validation_config = DataValidationConfig()
         self.model_trainer_config = ModelTrainerConfig()
         self.model_evaluation_config = ModelEvaluationConfig()
+        self.model_pusher_config = ModelPusherConfig()
 
 
 
@@ -129,6 +132,21 @@ class TrainPipeline:
 
         except Exception as e:
             raise CustomException(e, sys)
+    
+    def start_model_pusher(self,
+                      model_trainer_artifact,
+                      model_evaluation_artifact):
+        try:
+            model_pusher = ModelPusher(
+                model_pusher_config=self.model_pusher_config,
+                model_trainer_artifact=model_trainer_artifact,
+                model_evaluation_artifact=model_evaluation_artifact
+            )
+
+            return model_pusher.initiate_model_pusher()
+        except Exception as e:
+            raise CustomException(e, sys)
+        
 
 
     def run_pipeline(self) -> None:
@@ -141,11 +159,16 @@ class TrainPipeline:
 
                 if data_validation_artifact.validation_status:
 
-                    model_trainer_artifact = self.start_model_trainer()
+                    model_trainer_artifact = self.start_model_trainer(force_train)
 
                     model_evaluation_artifact = self.start_model_evaluation(
-                        model_trainer_artifact=model_trainer_artifact
+                        model_trainer_artifact
                     )
+
+                    model_pusher_artifact = self.start_model_pusher(
+                        model_trainer_artifact,
+                        model_evaluation_artifact
+    )
 
                 else:
                     raise Exception("Your data is not in correct format")

@@ -55,3 +55,21 @@ class ModelEvaluationConfig:
     )
 
     threshold: float = training_pipeline.MODEL_EVALUATION_THRESHOLD
+
+
+@dataclass
+class ModelPusherConfig:
+    model_pusher_dir: str = os.path.join(
+        training_pipeline_config.artifacts_dir,
+        "model_pusher"
+    )
+
+    saved_model_dir: str = os.path.join(
+        model_pusher_dir,
+        "models"
+    )
+
+    registry_file_path: str = os.path.join(
+        model_pusher_dir,
+        "model_registry.json"
+    )
